@@ -79,15 +79,15 @@ const ContactManager: React.FC<ContactManagerProps> = ({
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">संपर्क प्रबंधन (Contact Management)</h2>
-          <p className="text-gray-600 mt-2">अपनी कॉलिंग सूची और संपर्क जानकारी प्रबंधित करें</p>
+          <h2 className="text-3xl font-bold text-gray-900">Contact Management</h2>
+          <p className="text-gray-600 mt-2">Manage your calling list and contact information</p>
         </div>
         <button
           onClick={() => setIsAddingContact(true)}
           className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-medium flex items-center space-x-2 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
         >
           <Plus className="w-5 h-5" />
-          <span>संपर्क जोड़ें (Add Contact)</span>
+          <span>Add Contact</span>
         </button>
       </div>
 
@@ -95,13 +95,13 @@ const ContactManager: React.FC<ContactManagerProps> = ({
       {(isAddingContact || editingContact) && (
         <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
           <h3 className="text-xl font-semibold text-gray-900 mb-4">
-            {editingContact ? 'संपर्क संपादित करें (Edit Contact)' : 'नया संपर्क जोड़ें (Add New Contact)'}
+            {editingContact ? 'Edit Contact' : 'Add New Contact'}
           </h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  पूरा नाम (Full Name) *
+                  Full Name *
                 </label>
                 <div className="relative">
                   <User className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
@@ -110,14 +110,14 @@ const ContactManager: React.FC<ContactManagerProps> = ({
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                    placeholder="पूरा नाम दर्ज करें"
+                    placeholder="Enter full name"
                     required
                   />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  फोन नंबर (Phone Number) *
+                  Phone Number *
                 </label>
                 <div className="relative">
                   <Phone className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
@@ -135,7 +135,7 @@ const ContactManager: React.FC<ContactManagerProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  राज्य (State)
+                  State
                 </label>
                 <div className="relative">
                   <MapPin className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
@@ -144,7 +144,7 @@ const ContactManager: React.FC<ContactManagerProps> = ({
                     onChange={(e) => setFormData({ ...formData, state: e.target.value })}
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   >
-                    <option value="">राज्य चुनें (Select State)</option>
+                    <option value="">Select State</option>
                     {indianStates.map((state) => (
                       <option key={state} value={state}>{state}</option>
                     ))}
@@ -153,7 +153,7 @@ const ContactManager: React.FC<ContactManagerProps> = ({
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  शहर (City)
+                  City
                 </label>
                 <div className="relative">
                   <MapPin className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
@@ -162,14 +162,14 @@ const ContactManager: React.FC<ContactManagerProps> = ({
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                    placeholder="शहर का नाम दर्ज करें"
+                    placeholder="Enter city name"
                   />
                 </div>
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                टिप्पणियाँ (Notes) - वैकल्पिक
+                Notes (Optional)
               </label>
               <div className="relative">
                 <FileText className="w-5 h-5 text-gray-400 absolute left-3 top-3" />
@@ -178,7 +178,7 @@ const ContactManager: React.FC<ContactManagerProps> = ({
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
                   rows={3}
-                  placeholder="इस संपर्क के बारे में कोई अतिरिक्त टिप्पणी जोड़ें..."
+                  placeholder="Add any additional notes about this contact..."
                 />
               </div>
             </div>
@@ -187,14 +187,14 @@ const ContactManager: React.FC<ContactManagerProps> = ({
                 type="submit"
                 className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
               >
-                {editingContact ? 'संपर्क अपडेट करें' : 'संपर्क जोड़ें'}
+                {editingContact ? 'Update Contact' : 'Add Contact'}
               </button>
               <button
                 type="button"
                 onClick={resetForm}
                 className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200"
               >
-                रद्द करें (Cancel)
+                Cancel
               </button>
             </div>
           </form>
@@ -205,7 +205,7 @@ const ContactManager: React.FC<ContactManagerProps> = ({
       <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
         <div className="p-6 border-b border-gray-200">
           <h3 className="text-xl font-semibold text-gray-900">
-            संपर्क सूची (Contacts) ({contacts.length})
+            Contact List ({contacts.length})
           </h3>
         </div>
         
@@ -256,14 +256,14 @@ const ContactManager: React.FC<ContactManagerProps> = ({
         ) : (
           <div className="text-center py-12">
             <User className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-gray-900 mb-2">अभी तक कोई संपर्क नहीं</h3>
-            <p className="text-gray-500 mb-6">कॉलिंग अभियान शुरू करने के लिए अपना पहला संपर्क जोड़ें</p>
+            <h3 className="text-xl font-medium text-gray-900 mb-2">No contacts yet</h3>
+            <p className="text-gray-500 mb-6">Add your first contact to start calling campaigns</p>
             <button
               onClick={() => setIsAddingContact(true)}
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-medium inline-flex items-center space-x-2 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               <Plus className="w-5 h-5" />
-              <span>पहला संपर्क जोड़ें</span>
+              <span>Add First Contact</span>
             </button>
           </div>
         )}

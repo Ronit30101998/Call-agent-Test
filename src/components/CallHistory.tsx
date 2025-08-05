@@ -102,8 +102,8 @@ const CallHistory: React.FC<CallHistoryProps> = ({ callHistory, contacts }) => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">कॉल इतिहास (Call History)</h2>
-          <p className="text-gray-600 mt-2">अपनी कॉलिंग गतिविधि को ट्रैक और विश्लेषित करें</p>
+          <h2 className="text-3xl font-bold text-gray-900">Call History</h2>
+          <p className="text-gray-600 mt-2">Track and analyze your calling activity</p>
         </div>
         <button
           onClick={exportToCSV}
@@ -111,7 +111,7 @@ const CallHistory: React.FC<CallHistoryProps> = ({ callHistory, contacts }) => {
           className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-gray-400 disabled:to-gray-500 text-white px-6 py-3 rounded-lg font-medium flex items-center space-x-2 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none disabled:cursor-not-allowed"
         >
           <Download className="w-5 h-5" />
-          <span>CSV निर्यात करें</span>
+          <span>Export CSV</span>
         </button>
       </div>
 
@@ -120,7 +120,7 @@ const CallHistory: React.FC<CallHistoryProps> = ({ callHistory, contacts }) => {
         <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">कुल कॉल</p>
+              <p className="text-sm font-medium text-gray-600">Total Calls</p>
               <p className="text-3xl font-bold text-gray-900 mt-2">{stats.total}</p>
             </div>
             <Phone className="w-12 h-12 text-blue-500" />
@@ -130,7 +130,7 @@ const CallHistory: React.FC<CallHistoryProps> = ({ callHistory, contacts }) => {
         <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">पूर्ण</p>
+              <p className="text-sm font-medium text-gray-600">Completed</p>
               <p className="text-3xl font-bold text-green-600 mt-2">{stats.completed}</p>
             </div>
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-2xl">
@@ -142,7 +142,7 @@ const CallHistory: React.FC<CallHistoryProps> = ({ callHistory, contacts }) => {
         <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">असफल</p>
+              <p className="text-sm font-medium text-gray-600">Failed</p>
               <p className="text-3xl font-bold text-red-600 mt-2">{stats.failed}</p>
             </div>
             <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center text-2xl">
@@ -154,7 +154,7 @@ const CallHistory: React.FC<CallHistoryProps> = ({ callHistory, contacts }) => {
         <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">लंबित</p>
+              <p className="text-sm font-medium text-gray-600">Pending</p>
               <p className="text-3xl font-bold text-blue-600 mt-2">{stats.pending}</p>
             </div>
             <Clock className="w-12 h-12 text-blue-500" />
@@ -170,7 +170,7 @@ const CallHistory: React.FC<CallHistoryProps> = ({ callHistory, contacts }) => {
               <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="संपर्क नाम या फोन से खोजें..."
+                placeholder="Search by contact name or phone..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
@@ -184,11 +184,11 @@ const CallHistory: React.FC<CallHistoryProps> = ({ callHistory, contacts }) => {
               onChange={(e) => setStatusFilter(e.target.value)}
               className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             >
-              <option value="all">सभी स्थिति</option>
-              <option value="completed">पूर्ण</option>
-              <option value="failed">असफल</option>
-              <option value="calling">कॉल कर रहे हैं</option>
-              <option value="pending">लंबित</option>
+              <option value="all">All Status</option>
+              <option value="completed">Completed</option>
+              <option value="failed">Failed</option>
+              <option value="calling">Calling</option>
+              <option value="pending">Pending</option>
             </select>
             
             <select
@@ -196,10 +196,10 @@ const CallHistory: React.FC<CallHistoryProps> = ({ callHistory, contacts }) => {
               onChange={(e) => setDateFilter(e.target.value)}
               className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             >
-              <option value="all">सभी समय</option>
-              <option value="today">आज</option>
-              <option value="week">इस सप्ताह</option>
-              <option value="month">इस महीने</option>
+              <option value="all">All Time</option>
+              <option value="today">Today</option>
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
             </select>
           </div>
         </div>
@@ -209,7 +209,7 @@ const CallHistory: React.FC<CallHistoryProps> = ({ callHistory, contacts }) => {
       <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
         <div className="p-6 border-b border-gray-200">
           <h3 className="text-xl font-semibold text-gray-900">
-            कॉल रिकॉर्ड ({sortedHistory.length} {sortedHistory.length === 1 ? 'रिकॉर्ड' : 'रिकॉर्ड'})
+            Call Records ({sortedHistory.length} {sortedHistory.length === 1 ? 'record' : 'records'})
           </h3>
         </div>
         
@@ -219,19 +219,19 @@ const CallHistory: React.FC<CallHistoryProps> = ({ callHistory, contacts }) => {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    संपर्क
+                    Contact
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    फोन नंबर
+                    Phone Number
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    दिनांक और समय
+                    Date & Time
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    स्थिति
+                    Status
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    संदेश
+                    Message
                   </th>
                 </tr>
               </thead>
@@ -259,9 +259,9 @@ const CallHistory: React.FC<CallHistoryProps> = ({ callHistory, contacts }) => {
                       <div className="flex items-center space-x-2">
                         <Calendar className="w-4 h-4 text-gray-400" />
                         <div>
-                          <div>{new Date(call.scheduledTime).toLocaleDateString('hi-IN', { timeZone: 'Asia/Kolkata' })}</div>
+                          <div>{new Date(call.scheduledTime).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })}</div>
                           <div className="text-xs text-gray-500">
-                            {new Date(call.scheduledTime).toLocaleTimeString('hi-IN', { timeZone: 'Asia/Kolkata' })}
+                            {new Date(call.scheduledTime).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' })}
                           </div>
                         </div>
                       </div>
@@ -283,11 +283,11 @@ const CallHistory: React.FC<CallHistoryProps> = ({ callHistory, contacts }) => {
         ) : (
           <div className="text-center py-12">
             <Phone className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-gray-900 mb-2">कोई कॉल इतिहास नहीं</h3>
+            <h3 className="text-xl font-medium text-gray-900 mb-2">No call history</h3>
             <p className="text-gray-500">
               {callHistory.length === 0 
-                ? "इतिहास देखने के लिए कॉल करना शुरू करें"
-                : "आपके वर्तमान फ़िल्टर से कोई कॉल मेल नहीं खाती"
+                ? "Start making calls to see history"
+                : "No calls match your current filters"
               }
             </p>
           </div>

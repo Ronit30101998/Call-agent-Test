@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Play, Pause, Trash2, Edit, Users, Phone, Calendar, Settings } from 'lucide-react';
 import { Contact, Campaign, TwilioConfig } from '../App';
+import { makeCall } from '../utils/twilioClient';
 
 interface CampaignManagerProps {
   contacts: Contact[];
@@ -73,22 +74,29 @@ const CampaignManager: React.FC<CampaignManagerProps> = ({
       return;
     }
 
-    // In a real implementation, this would make actual Twilio API calls
-    // For demo purposes, we'll simulate the calling process
+    // Make actual Twilio API calls
     const selectedContacts = contacts.filter(c => campaign.contacts.includes(c.id));
     
-    for (let i = 0; i < selectedContacts.length; i++) {
-      const contact = selectedContacts[i];
+    try {
+      for (let i = 0; i < selectedContacts.length; i++) {
+        const contact = selectedContacts[i];
+        
+        // Make actual Twilio API call
+        setTimeout(async () => {
+          try {
+            await makeCall(contact, twilioConfig);
+            console.log(`Successfully called ${contact.name} at ${contact.phone}`);
+          } catch (error) {
+            console.error(`Failed to call ${contact.name}:`, error);
+          }
+        }, i * 3000); // 3 second delay between calls
+      }
       
-      // Simulate API call delay
-      setTimeout(() => {
-        console.log(`Calling ${contact.name} at ${contact.phone}...`);
-        // Here you would make the actual Twilio API call
-        // Example: await twilioClient.calls.create({...})
-      }, i * 2000); // 2 second delay between calls
+      alert(`Started calling campaign "${campaign.name}" with ${selectedContacts.length} contacts!`);
+    } catch (error) {
+      console.error('Campaign start error:', error);
+      alert('Failed to start campaign. Please check your Twilio configuration.');
     }
-
-    alert(`Started calling campaign "${campaign.name}" with ${selectedContacts.length} contacts!`);
   };
 
   const toggleContactSelection = (contactId: string) => {
@@ -121,15 +129,15 @@ const CampaignManager: React.FC<CampaignManagerProps> = ({
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">अभियान प्रबंधन (Campaign Management)</h2>
-          <p className="text-gray-600 mt-2">अपने कॉलिंग अभियान बनाएं और प्रबंधित करें</p>
+          <h2 className="text-3xl font-bold text-gray-900">Campaign Management</h2>
+          <p className="text-gray-600 mt-2">Create and manage your calling campaigns</p>
         </div>
         <button
           onClick={() => setIsCreating(true)}
           className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-medium flex items-center space-x-2 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
         >
           <Plus className="w-5 h-5" />
-          <span>अभियान बनाएं</span>
+          <span>Create Campaign</span>
         </button>
       </div>
 
@@ -139,7 +147,7 @@ const CampaignManager: React.FC<CampaignManagerProps> = ({
           <div className="flex items-center">
             <Settings className="w-5 h-5 text-amber-600 mr-2" />
             <p className="text-amber-800">
-              <strong>Twilio कॉन्फ़िगरेशन आवश्यक:</strong> कॉलिंग कार्यक्षमता सक्षम करने के लिए कृपया अपनी Twilio सेटिंग्स कॉन्फ़िगर करें।
+              <strong>Twilio Configuration Required:</strong> Please configure your Twilio settings to enable calling functionality.
             </p>
           </div>
         </div>
@@ -149,41 +157,41 @@ const CampaignManager: React.FC<CampaignManagerProps> = ({
       {(isCreating || editingCampaign) && (
         <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
           <h3 className="text-xl font-semibold text-gray-900 mb-6">
-            {editingCampaign ? 'अभियान संपादित करें' : 'नया अभियान बनाएं'}
+            {editingCampaign ? 'Edit Campaign' : 'Create New Campaign'}
           </h3>
           
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  अभियान का नाम (Campaign Name) *
+                  Campaign Name *
                 </label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                  placeholder="अभियान का नाम दर्ज करें"
+                  placeholder="Enter campaign name"
                   required
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  विवरण (Description)
+                  Description
                 </label>
                 <input
                   type="text"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                  placeholder="अभियान का संक्षिप्त विवरण"
+                  placeholder="Brief campaign description"
                 />
               </div>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
-                संपर्क चुनें ({formData.selectedContacts.length} चयनित)
+                Select Contacts ({formData.selectedContacts.length} selected)
               </label>
               <div className="max-h-64 overflow-y-auto border border-gray-300 rounded-lg p-4 space-y-2">
                 {contacts.length > 0 ? (
@@ -205,7 +213,7 @@ const CampaignManager: React.FC<CampaignManagerProps> = ({
                     </label>
                   ))
                 ) : (
-                  <p className="text-gray-500 text-center py-4">कोई संपर्क उपलब्ध नहीं</p>
+                  <p className="text-gray-500 text-center py-4">No contacts available</p>
                 )}
               </div>
             </div>
@@ -215,14 +223,14 @@ const CampaignManager: React.FC<CampaignManagerProps> = ({
                 type="submit"
                 className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
               >
-                {editingCampaign ? 'अभियान अपडेट करें' : 'अभियान बनाएं'}
+                {editingCampaign ? 'Update Campaign' : 'Create Campaign'}
               </button>
               <button
                 type="button"
                 onClick={resetForm}
                 className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200"
               >
-                रद्द करें
+                Cancel
               </button>
             </div>
           </form>
@@ -252,11 +260,11 @@ const CampaignManager: React.FC<CampaignManagerProps> = ({
               <div className="space-y-3 mb-6">
                 <div className="flex items-center text-gray-600">
                   <Users className="w-4 h-4 mr-2" />
-                  <span className="text-sm">{campaign.contacts.length} संपर्क</span>
+                  <span className="text-sm">{campaign.contacts.length} contacts</span>
                 </div>
                 <div className="flex items-center text-gray-600">
                   <Calendar className="w-4 h-4 mr-2" />
-                  <span className="text-sm">बनाया गया {new Date(campaign.createdAt).toLocaleDateString('hi-IN', { timeZone: 'Asia/Kolkata' })}</span>
+                  <span className="text-sm">Created {new Date(campaign.createdAt).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' })}</span>
                 </div>
               </div>
 
@@ -295,7 +303,7 @@ const CampaignManager: React.FC<CampaignManagerProps> = ({
                   className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center space-x-1 transition-all duration-200 shadow-md hover:shadow-lg disabled:cursor-not-allowed"
                 >
                   <Phone className="w-4 h-4" />
-                  <span>कॉल शुरू करें</span>
+                  <span>Start Calling</span>
                 </button>
               </div>
             </div>
@@ -303,14 +311,14 @@ const CampaignManager: React.FC<CampaignManagerProps> = ({
         ) : (
           <div className="col-span-full text-center py-12">
             <Phone className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-gray-900 mb-2">अभी तक कोई अभियान नहीं</h3>
-            <p className="text-gray-500 mb-6">शुरू करने के लिए अपना पहला कॉलिंग अभियान बनाएं</p>
+            <h3 className="text-xl font-medium text-gray-900 mb-2">No campaigns yet</h3>
+            <p className="text-gray-500 mb-6">Create your first calling campaign to get started</p>
             <button
               onClick={() => setIsCreating(true)}
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-medium inline-flex items-center space-x-2 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               <Plus className="w-5 h-5" />
-              <span>पहला अभियान बनाएं</span>
+              <span>Create First Campaign</span>
             </button>
           </div>
         )}

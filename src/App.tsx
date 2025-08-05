@@ -155,7 +155,7 @@ function App() {
                 <Phone className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">भारत CallAgent</h1>
+                <h1 className="text-xl font-bold text-gray-900">India CallAgent</h1>
                 <p className="text-sm text-gray-500">Indian Calling Solution</p>
               </div>
             </div>
@@ -187,8 +187,8 @@ function App() {
           {activeTab === 'dashboard' && (
             <div className="space-y-8">
               <div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">डैशबोर्ड (Dashboard)</h2>
-                <p className="text-gray-600">अपने कॉलिंग अभियानों और प्रदर्शन की निगरानी करें</p>
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h2>
+                <p className="text-gray-600">Monitor your calling campaigns and performance</p>
               </div>
 
               {/* Stats Cards */}
@@ -196,7 +196,7 @@ function App() {
                 <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">कुल संपर्क (Total Contacts)</p>
+                      <p className="text-sm font-medium text-gray-600">Total Contacts</p>
                       <p className="text-3xl font-bold text-gray-900 mt-2">{stats.totalContacts}</p>
                     </div>
                     <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -208,7 +208,7 @@ function App() {
                 <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">सक्रिय अभियान (Active Campaigns)</p>
+                      <p className="text-sm font-medium text-gray-600">Active Campaigns</p>
                       <p className="text-3xl font-bold text-gray-900 mt-2">{stats.activeCampaigns}</p>
                     </div>
                     <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
@@ -220,7 +220,7 @@ function App() {
                 <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">कुल कॉल (Total Calls)</p>
+                      <p className="text-sm font-medium text-gray-600">Total Calls</p>
                       <p className="text-3xl font-bold text-gray-900 mt-2">{stats.totalCalls}</p>
                     </div>
                     <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -232,7 +232,7 @@ function App() {
                 <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">सफलता दर (Success Rate)</p>
+                      <p className="text-sm font-medium text-gray-600">Success Rate</p>
                       <p className="text-3xl font-bold text-gray-900 mt-2">{stats.successRate}%</p>
                     </div>
                     <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
@@ -244,7 +244,7 @@ function App() {
 
               {/* Recent Activity */}
               <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">हाल की गतिविधि (Recent Activity)</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">Recent Activity</h3>
                 {callHistory.slice(0, 5).length > 0 ? (
                   <div className="space-y-3">
                     {callHistory.slice(0, 5).map((call) => {
@@ -296,6 +296,7 @@ function App() {
           {activeTab === 'scheduler' && (
             <CallScheduler
               contacts={contacts}
+              twilioConfig={twilioConfig}
               onScheduleCall={(schedule) => {
                 setCallHistory(prev => [...prev, schedule]);
               }}

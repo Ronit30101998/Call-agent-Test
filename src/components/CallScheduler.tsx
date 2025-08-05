@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Clock, Phone, Calendar, Users, Play } from 'lucide-react';
 import { Contact, CallSchedule } from '../App';
+import { makeCall } from '../utils/twilioClient';
 
 interface CallSchedulerProps {
   contacts: Contact[];
   onScheduleCall: (schedule: CallSchedule) => void;
+  twilioConfig: any;
 }
 
-const CallScheduler: React.FC<CallSchedulerProps> = ({ contacts, onScheduleCall }) => {
+const CallScheduler: React.FC<CallSchedulerProps> = ({ contacts, onScheduleCall, twilioConfig }) => {
   const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
   const [scheduledTime, setScheduledTime] = useState('');
   const [interval, setInterval] = useState(5); // minutes between calls
@@ -15,14 +17,15 @@ const CallScheduler: React.FC<CallSchedulerProps> = ({ contacts, onScheduleCall 
   const [message, setMessage] = useState('');
   const [scheduleType, setScheduleType] = useState<'immediate' | 'scheduled' | 'interval'>('immediate');
 
-  const handleSchedule = () => {
+  const handleSchedule = async () => {
     if (selectedContacts.length === 0) return;
 
     const baseTime = scheduleType === 'immediate' 
       ? new Date() 
       : new Date(scheduledTime);
 
-    selectedContacts.forEach((contactId, index) => {
+    for (let index = 0; index < selectedContacts.length; index++) {
+      const contactId = selectedContacts[index];
       const callTime = new Date(baseTime);
       
       if (scheduleType === 'interval') {
@@ -35,12 +38,27 @@ const CallScheduler: React.FC<CallSchedulerProps> = ({ contacts, onScheduleCall 
         scheduledTime: callTime.toISOString(),
         interval: scheduleType === 'interval' ? interval : undefined,
         repeatCount,
-        status: 'pending',
+        status: scheduleType === 'immediate' ? 'calling' : 'pending',
         message: message || undefined
       };
 
       onScheduleCall(schedule);
-    });
+      
+      // If immediate call, make the actual call
+      if (scheduleType === 'immediate' && twilioConfig.accountSid) {
+        const contact = contacts.find(c => c.id === contactId);
+        if (contact) {
+          try {
+            setTimeout(async () => {
+              await makeCall(contact, twilioConfig, message);
+              console.log(`Called ${contact.name} successfully`);
+            }, index * 3000); // 3 second delay between calls
+          } catch (error) {
+            console.error(`Failed to call ${contact.name}:`, error);
+          }
+        }
+      }
+    }
 
     // Reset form
     setSelectedContacts([]);
@@ -79,8 +97,8 @@ const CallScheduler: React.FC<CallSchedulerProps> = ({ contacts, onScheduleCall 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold text-gray-900">कॉल शेड्यूलर (Call Scheduler)</h2>
-        <p className="text-gray-600 mt-2">अनुकूलन योग्य समय के साथ कई संपर्कों को कॉल शेड्यूल करें</p>
+        <h2 className="text-3xl font-bold text-gray-900">Call Scheduler</h2>
+        <p className="text-gray-600 mt-2">Schedule calls to multiple contacts with customizable timing</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -89,20 +107,20 @@ const CallScheduler: React.FC<CallSchedulerProps> = ({ contacts, onScheduleCall 
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold text-gray-900 flex items-center space-x-2">
               <Users className="w-6 h-6 text-blue-600" />
-              <span>संपर्क चुनें ({selectedContacts.length} चयनित)</span>
+              <span>Select Contacts ({selectedContacts.length} selected)</span>
             </h3>
             <div className="flex space-x-2">
               <button
                 onClick={selectAllContacts}
                 className="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-lg hover:bg-blue-200 transition-colors duration-200"
               >
-                सभी चुनें
+                Select All
               </button>
               <button
                 onClick={clearSelection}
                 className="text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-lg hover:bg-gray-200 transition-colors duration-200"
               >
-                साफ़ करें
+                Clear
               </button>
             </div>
           </div>
@@ -146,8 +164,8 @@ const CallScheduler: React.FC<CallSchedulerProps> = ({ contacts, onScheduleCall 
           ) : (
             <div className="text-center py-8">
               <Users className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">कोई संपर्क उपलब्ध नहीं</p>
-              <p className="text-sm text-gray-400">कॉल शेड्यूल करने के लिए पहले संपर्क जोड़ें</p>
+              <p className="text-gray-500">No contacts available</p>
+              <p className="text-sm text-gray-400">Add contacts first to schedule calls</p>
             </div>
           )}
         </div>
@@ -156,17 +174,17 @@ const CallScheduler: React.FC<CallSchedulerProps> = ({ contacts, onScheduleCall 
         <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 space-y-6">
           <h3 className="text-xl font-semibold text-gray-900 flex items-center space-x-2">
             <Clock className="w-6 h-6 text-purple-600" />
-            <span>शेड्यूल सेटिंग्स</span>
+            <span>Schedule Settings</span>
           </h3>
 
           {/* Schedule Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">कॉल समय (Call Timing)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-3">Call Timing</label>
             <div className="space-y-2">
               {[
-                { value: 'immediate', label: 'तुरंत कॉल करें (Call Immediately)', desc: 'अभी कॉल करना शुरू करें' },
-                { value: 'scheduled', label: 'बाद के लिए शेड्यूल करें (Schedule for Later)', desc: 'एक विशिष्ट प्रारंभ समय सेट करें' },
-                { value: 'interval', label: 'अंतराल पर कॉल (Staggered Calls)', desc: 'अंतराल पर कॉल करें' }
+                { value: 'immediate', label: 'Call Immediately', desc: 'Start calling right now' },
+                { value: 'scheduled', label: 'Schedule for Later', desc: 'Set a specific start time' },
+                { value: 'interval', label: 'Staggered Calls', desc: 'Call with intervals between contacts' }
               ].map((option) => (
                 <label key={option.value} className="flex items-start space-x-3 cursor-pointer">
                   <input
@@ -190,7 +208,7 @@ const CallScheduler: React.FC<CallSchedulerProps> = ({ contacts, onScheduleCall 
           {(scheduleType === 'scheduled' || scheduleType === 'interval') && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {scheduleType === 'scheduled' ? 'कॉल समय (Call Time)' : 'प्रारंभ समय (Start Time)'}
+                {scheduleType === 'scheduled' ? 'Call Time' : 'Start Time'}
               </label>
               <input
                 type="datetime-local"
@@ -205,7 +223,7 @@ const CallScheduler: React.FC<CallSchedulerProps> = ({ contacts, onScheduleCall 
           {scheduleType === 'interval' && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                कॉल के बीच अंतराल (मिनट में)
+                Interval Between Calls (minutes)
               </label>
               <input
                 type="number"
@@ -221,7 +239,7 @@ const CallScheduler: React.FC<CallSchedulerProps> = ({ contacts, onScheduleCall 
           {/* Repeat Count */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              दोहराने की संख्या (Repeat Count)
+              Repeat Count
             </label>
             <input
               type="number"
@@ -236,26 +254,26 @@ const CallScheduler: React.FC<CallSchedulerProps> = ({ contacts, onScheduleCall 
           {/* Message */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              कॉल संदेश (वैकल्पिक)
+              Call Message (Optional)
             </label>
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
               rows={3}
-              placeholder="कॉल के दौरान चलाने के लिए संदेश दर्ज करें..."
+              placeholder="Enter message to play during the call..."
             />
           </div>
 
           {/* Schedule Summary */}
           <div className="bg-gray-50 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">शेड्यूल सारांश (Schedule Summary)</h4>
+            <h4 className="font-medium text-gray-900 mb-2">Schedule Summary</h4>
             <div className="space-y-1 text-sm text-gray-600">
-              <p>संपर्क: {selectedContacts.length}</p>
-              <p>प्रारंभ समय: {getNextCallTime()}</p>
-              <p>दोहराना: {repeatCount}x</p>
+              <p>Contacts: {selectedContacts.length}</p>
+              <p>Start Time: {getNextCallTime()}</p>
+              <p>Repeat: {repeatCount}x</p>
               {scheduleType === 'interval' && (
-                <p>कुल अवधि: ~{Math.ceil((selectedContacts.length - 1) * interval)} मिनट</p>
+                <p>Total Duration: ~{Math.ceil((selectedContacts.length - 1) * interval)} minutes</p>
               )}
             </div>
           </div>
@@ -267,7 +285,7 @@ const CallScheduler: React.FC<CallSchedulerProps> = ({ contacts, onScheduleCall 
             className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-gray-400 disabled:to-gray-500 text-white px-6 py-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none disabled:cursor-not-allowed"
           >
             <Play className="w-5 h-5" />
-            <span>कॉल शेड्यूल करें</span>
+            <span>Schedule Calls</span>
           </button>
         </div>
       </div>
